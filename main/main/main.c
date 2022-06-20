@@ -112,17 +112,21 @@ void render(unsigned char mat[N][N], int frame_count) {
 			_delay_ms(2.5);
         }
     }
-    reset_frame();
+    // reset_frame();
 }
 
 int main(void) {
     DDRA = 0xFF;
 	DDRB = 0xFF;
+	DDRD = 0xFE;
 	
     while (1) {
         for (int i = 0; i < 8; i = (i + 1) % 8) {
-            render(mat1, (i == 0 ? 200 : 25));
-            hshift(mat1, 1);
+			unsigned char in = (PIND & 0x01);
+			if (in) {
+				hshift(mat1, 1);
+			}
+			render(mat1, 5);
         }
     }
 }
