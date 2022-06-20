@@ -94,7 +94,7 @@ void neg_rotate(unsigned char mat[N][N]) {
 
     for (int i = 0; i < N; ++i) {
         for (int j = 0; j < N; ++j) {
-            mat[N - 1 - j][j] = temp_mat[i][j];
+            mat[N - 1 - j][i] = temp_mat[i][j];
         }
     }
 }
