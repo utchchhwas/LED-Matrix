@@ -4,8 +4,8 @@
 #include <util/delay.h>
 
 #define N 8
-#define ROW PORTA
-#define COL1 PORTB
+
+int shift_status = 0;
 
 // unsigned char mat1[N][N] = {
 // //  0  1  2  3  4  5  6  7
@@ -99,32 +99,30 @@ void neg_rotate(unsigned char mat[N][N]) {
     }
 }
 
-void reset_frame() {
-	ROW  = 0x00;
-	COL1 = 0x00;
-}
-
 void render(unsigned char mat[N][N], int frame_count) {
     while (frame_count--) {
         for (int i = 0; i < N; ++i) {
-            ROW = (1 << i);
-            COL1 = ~get_row(mat[i]);
+            PORTA = (1 << i);
+            PORTD = ~get_row(mat[i]);
 			_delay_ms(2.5);
         }
     }
-    // reset_frame();
 }
 
 int main(void) {
     DDRA = 0xFF;
-	DDRB = 0xFF;
-	DDRD = 0xFE;
+	DDRD = 0xFF;
+	DDRB = 0xFE;
 	
     while (1) {
         for (int i = 0; i < 8; i = (i + 1) % 8) {
-			unsigned char in = (PIND & 0x01);
-			if (in) {
-				hshift(mat1, 1);
+			unsigned char in = (PINB & 0x01);
+            if (in) {
+                shift_status = !shift_status;
+                render(mat1, 15);
+            }
+			if (shift_status) {
+				hshift(mat1,-1);
 			}
 			render(mat1, 5);
         }
