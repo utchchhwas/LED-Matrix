@@ -102,9 +102,11 @@ void neg_rotate(unsigned char mat[N][N]) {
 void render(unsigned char mat[N][N], int frame_count) {
     while (frame_count--) {
         for (int i = 0; i < N; ++i) {
-            PORTA = (1 << i);
-            PORTD = ~get_row(mat[i]);
-			_delay_ms(2.5);
+            for (int j = 0; j < 5; ++j) {
+                PORTA = (1 << i);
+                PORTD = ~get_row(mat[i]);
+            }
+            _delay_ms(2.5);
         }
     }
 }
@@ -115,17 +117,15 @@ int main(void) {
 	DDRB = 0xFE;
 	
     while (1) {
-        for (int i = 0; i < 8; i = (i + 1) % 8) {
-			unsigned char in = (PINB & 0x01);
-            if (in) {
-                shift_status = !shift_status;
-                render(mat1, 15);
-            }
-			if (shift_status) {
-				hshift(mat1,-1);
-			}
-			render(mat1, 5);
+        unsigned char in = (PINB & 0x01);
+        if (in) {
+            shift_status = !shift_status;
+            render(mat1, 15);
         }
+        if (shift_status) {
+            hshift(mat1,-1);
+        }
+        render(mat1, 1);
     }
 }
 
